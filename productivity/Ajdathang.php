@@ -6,12 +6,15 @@ require('../config.php');
 require('../function/db_lib.php');
 $name = safe($_POST['name']);
 $soluong = safe($_POST['value']);
-if ($soluong==0) {
-    exit();
-}
+
 $oDB = new db();
 
 $str_arr = explode ("_", $name);
+echo $str_arr[1];
+if ($str_arr[0]!='remark'&&$soluong==0) {
+    exit();
+}
+
 
 echo $action = $str_arr[0];
 if ($action=='plan') {
@@ -44,6 +47,16 @@ if ($action=='plan') {
         $sql = "UPDATE SanLuong SET SanLuongQty=".$soluong." Where SanLuongId=".$kehoach['SanLuongId'];
     } else {
         $sql= "INSERT INTO `SanLuong`( `LineId`, `SanLuongQty`,`SanLuongTimes`,`SanLuongType`) VALUES (".$str_arr[1].",".$soluong.",".$str_arr[2].",'NG')";
+    }
+}elseif ($action=='remark') {
+    # kiểm tra xem đã tồn tại chưa
+    $sql = "Select * from remark where date(RemarkCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1];
+    $kehoach= $oDB -> fetchOne($sql);
+
+    if (isset($kehoach)) {
+        $sql = "UPDATE remark SET RemarkContent='".$soluong."' Where date(RemarkCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1];
+    } else {
+        $sql= "INSERT INTO `remark`( `LineId`, `RemarkContent`) VALUES (".$str_arr[1].",'".$soluong."')";
     }
 }
 echo $sql;

@@ -47,6 +47,7 @@ $lineid = (isset($_GET['line'])) ? safe($_GET['line']) : '1' ;
             <tr><td>Line</td><td><?php echo $list['LineName'] ?></td></tr>
             <tr><td>Products</td><td><?php echo $list['ProductsName'] ?></td></tr>
             <tr><td>Plan</td><td><input type="number" value="<?php echo $oDB->getplan($list['LineId']) ?>" class='form-control' name="plan_<?php echo $list['LineId']?>"></td></tr>
+            <tr><td>Remark</td><td><input type="text" value="<?php echo $oDB->getremark($list['LineId']) ?>" class='form-control' name="remark_<?php echo $list['LineId']?>"></td></tr>
 
             <?php
             for ($i=1; $i < 6; $i++) { 

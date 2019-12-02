@@ -174,6 +174,31 @@ class db {
 			}
 			
 		}
+
+		public function getarget($lineid,$time){
+			$sql = "Select * from TargetQuantity where TargetQuantityTimes=".$time." AND LineId=".$lineid;
+			$rs = mysqli_query($this->dbh,$sql);
+			$result = $rs->fetch_array();
+			if (isset($result)) {
+				return $result['TargetQuantityQty'];
+			}else{
+				return "";
+			}
+			
+		}
+
+
+		public function getremark($lineid){
+			$sql = "Select * from remark where date(RemarkCreateDate)='".date('Y-m-d')."'AND LineId=".$lineid;
+			$rs = mysqli_query($this->dbh,$sql);
+			$result = $rs->fetch_array();
+			if (isset($result)) {
+				return $result['RemarkContent'];
+			}else{
+				return "";
+			}
+			
+		}
 }
 
 

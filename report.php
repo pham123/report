@@ -23,14 +23,29 @@ $oDB = new db();
   <meta name="author" content="">
   <link rel="icon" type="image/png" href="img/halla.png" />
 
-  <title>Login</title>
+  <title><?php echo $oDB->lang('TitleReport') ?></title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> -->
 
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <style>
+    td {
+      border:1px solid black;
+      text-align:center;
+      vertical-align: middle;
+      justify-content: center;
+      font-size:30px;
+      padding:1px;
+      color:black;
+      font-weight:bold;
+      
+    }
+
+    
+  </style>
 
 </head>
 
@@ -38,23 +53,23 @@ $oDB = new db();
 
   <div>
     <table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>
-      <tr>
-        <td rowspan="2"><?php echo $oDB->lang('Stt') ?></td>
-        <td rowspan="2"><?php echo $oDB->lang('Products') ?></td>
-        <td rowspan="2"><?php echo $oDB->lang('Line') ?></td>
-        <td rowspan="2"><?php echo $oDB->lang('Plan') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Total') ?></td>
-        <td rowspan="2"><?php echo $oDB->lang('Rate') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Times1') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Times2') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Times3') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Times4') ?></td>
-        <td colspan="2"><?php echo $oDB->lang('Times5') ?></td>
-        <td rowspan="2"><?php echo $oDB->lang('Remark') ?></td>
-
+      <tr style="">
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Stt') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Products') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Line') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Plan') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Total') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Rate') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Type') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times1') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times2') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times3') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times4') ?></td>
+        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times5') ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Remark') ?></td>
       </tr>
 
-      <tr>
+      <tr style="">
         <?php
           for ($i=1; $i < 7 ; $i++) { 
             echo "<td>".$oDB->lang('Ok')."</td>";
@@ -71,22 +86,40 @@ $list = $oDB -> fetchAll($sql);
 foreach ($list as $key => $value) {
   ?>
       <tr>
-        <td><?php echo $key+1 ?></td>
-        <td><?php echo $value['ProductsName'] ?></td>
-        <td><?php echo $value['LineName'] ?></td>
-        <td><?php echo $oDB->getplan($value['LineId']) ?></td>
-        <td><?php echo $ok = $oDB->getlineqty("OK",$value['LineId']) ?></td>
-        <td><?php echo $ng = $oDB->getlineqty("NG",$value['LineId']) ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $key+1 ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $value['ProductsName'] ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $value['LineName'] ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($oDB->getplan($value['LineId'])) ?></td>
+        <?php
+          $ok = $oDB->getlineqty("OK",$value['LineId']);
+          $ng = $oDB->getlineqty("NG",$value['LineId']);
+        
+        ?>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ok) ?></td>
+        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ng) ?></td>
         <?php
         $total = $ok + $ng;
         $rate = ($total!=0) ? round($ok/$total,2)*100 ." %" : "-" ;
-        echo "<td>".$rate."</td>";
+        echo "<td rowspan='2' style='vertical-align: middle; padding:1px;'>".$rate."</td>";
+        echo "<td>".$oDB->lang('Target')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
-          echo "<td>".$oDB->getqty('OK',$value['LineId'],$i)."</td>";
-          echo "<td>".$oDB->getqty('NG',$value['LineId'],$i)."</td>";
+          echo "<td colspan='2'>".viewprice($oDB->getarget($value['LineId'],$i))."</td>";
         }
         ?>
-        <td></td>
+
+        <td rowspan="2"><?php echo $oDB->getremark($value['LineId']) ?></td>
+
+      </tr>
+
+      <tr>
+
+        <?php
+         echo "<td>".$oDB->lang('Actual')."</td>";
+         for ($i=1; $i < 6 ; $i++) { 
+          echo "<td>".viewprice($oDB->getqty('OK',$value['LineId'],$i))."</td>";
+          echo "<td>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
+        }
+        ?>
 
       </tr>
   <?php
