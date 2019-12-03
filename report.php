@@ -53,7 +53,7 @@ $oDB = new db();
 
   <div>
     <table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>
-      <tr style="">
+      <tr style="background-color:#C6CAC9;">
         <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Stt') ?></td>
         <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Products') ?></td>
         <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Line') ?></td>
@@ -69,7 +69,7 @@ $oDB = new db();
         <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Remark') ?></td>
       </tr>
 
-      <tr style="">
+      <tr style="background-color:#C6CAC9;">
         <?php
           for ($i=1; $i < 7 ; $i++) { 
             echo "<td>".$oDB->lang('Ok')."</td>";
