@@ -52,7 +52,7 @@ $oDB = new db();
 <body>
     <div>
       <h1 style='text-align:center; font-weight:bold;'><?php echo $oDB->lang('ReportTitle') ?></h1>
-      <h3 style='text-align:center;'><?php echo $oDB->lang('LastUpdateTime') ?> : <?php echo date('dd-mm-yyy H:i:s') ?></h3>
+      <h3 style='text-align:center;'><?php echo $oDB->lang('LastUpdateTime') ?> : <?php echo date('d-m-Y H:i:s') ?></h3>
     </div>
   <div>
     <table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>
