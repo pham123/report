@@ -82,6 +82,7 @@ $oDB = new db();
       </tr>
 
       <?php
+      $today = date("Y-m-d");
 $sql = "select line.LineId,line.LineName,products.ProductsID,products.ProductsName 
 from line inner join `products` on line.ProductsId = products.ProductsId";
 $list = $oDB -> fetchAll($sql);
@@ -95,14 +96,15 @@ foreach ($list as $key => $value) {
         <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($oDB->getplan($value['LineId'])) ?></td>
         <?php
           $ok = $oDB->getlineqty("OK",$value['LineId']);
-          $ng = $oDB->getlineqty("NG",$value['LineId']);
+          $ng = $oDB->getlineqty("NG",$value['LineId'])
         
         ?>
         <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ok) ?></td>
         <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ng) ?></td>
         <?php
         $total = $ok + $ng;
-        $rate = ($total!=0) ? round($ok/$total,2)*100 ." %" : "-" ;
+        $total = $oDB->getplan($value['LineId']);
+        $rate = ($total!=0) ? round($ok/$total,3)*100 ." %" : "-" ;
         echo "<td rowspan='2' style='vertical-align: middle; padding:1px;'>".$rate."</td>";
         echo "<td>".$oDB->lang('Target')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
@@ -111,7 +113,6 @@ foreach ($list as $key => $value) {
         ?>
 
         <td rowspan="2"><?php echo $oDB->getremark($value['LineId']) ?></td>
-
       </tr>
 
       <tr>
@@ -119,8 +120,8 @@ foreach ($list as $key => $value) {
         <?php
          echo "<td>".$oDB->lang('Actual')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
-          echo "<td>".viewprice($oDB->getqty('OK',$value['LineId'],$i))."</td>";
-          echo "<td>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
+          echo "<td style='background-color:".$oDB->lang('color1','#b3ffe6').";'>".viewprice($oDB->getqty('OK',$value['LineId'],$i))."</td>";
+          echo "<td style='background-color:".$oDB->lang('color2','#b3ffe6').";'>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
         }
         ?>
 

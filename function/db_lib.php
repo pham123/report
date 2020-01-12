@@ -1,6 +1,4 @@
 <?php
-
-
 class db {
 	public $dbh; // Create a database connection for use by all functions in this class
 	public $lang="En";

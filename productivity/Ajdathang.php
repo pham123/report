@@ -12,7 +12,7 @@ $oDB = new db();
 $str_arr = explode ("_", $name);
 echo $str_arr[1];
 if ($str_arr[0]!='remark'&&$soluong==0) {
-    exit();
+    $soluong=0;
 }
 
 
@@ -23,30 +23,31 @@ if ($action=='plan') {
     $kehoach= $oDB -> fetchOne($sql);
 
     if (isset($kehoach)) {
-        $sql = "UPDATE kehoach SET KeHoachQty=".$soluong." Where date(KeHoachCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1];
+        $sql = "UPDATE kehoach SET KeHoachQty='".$soluong."' Where date(KeHoachCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1];
     } else {
-        $sql= "INSERT INTO `kehoach`( `LineId`, `KeHoachQty`) VALUES (".$str_arr[1].",".$soluong.")";
+        $sql= "INSERT INTO `kehoach`( `LineId`, `KeHoachQty`) VALUES (".$str_arr[1].",'".$soluong."')";
     }
     
 }elseif ($action=='ok') {
     # kiểm tra xem đã tồn tại chưa
     $sql = "Select * from sanluong where SanLuongType='OK' AND date(SanLuongCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1]." AND SanLuongTimes=".$str_arr[2];
     $kehoach= $oDB -> fetchOne($sql);
+    //var_dump($kehoach);
 
     if (isset($kehoach)) {
-        $sql = "UPDATE SanLuong SET SanLuongQty=".$soluong." Where SanLuongId=".$kehoach['SanLuongId'];
+        $sql = "UPDATE SanLuong SET SanLuongQty='".$soluong."' Where SanLuongId=".$kehoach['SanLuongId'];
     } else {
-        $sql= "INSERT INTO `SanLuong`( `LineId`, `SanLuongQty`,`SanLuongTimes`,`SanLuongType`) VALUES (".$str_arr[1].",".$soluong.",".$str_arr[2].",'OK')";
+        $sql= "INSERT INTO `SanLuong`( `LineId`, `SanLuongQty`,`SanLuongTimes`,`SanLuongType`) VALUES (".$str_arr[1].",'".$soluong."',".$str_arr[2].",'OK')";
     }
 }elseif ($action=='ng') {
     # kiểm tra xem đã tồn tại chưa
     $sql = "Select * from sanluong where SanLuongType='NG' AND date(SanLuongCreateDate)='".date('Y-m-d')."'AND LineId=".$str_arr[1]." AND SanLuongTimes=".$str_arr[2];
     $SanLuong= $oDB -> fetchOne($sql);
-
-    if (isset($kehoach)) {
-        $sql = "UPDATE SanLuong SET SanLuongQty=".$soluong." Where SanLuongId=".$kehoach['SanLuongId'];
+    
+    if (isset($SanLuong)) {
+        $sql = "UPDATE SanLuong SET SanLuongQty='".$soluong."' Where SanLuongId=".$SanLuong['SanLuongId'];
     } else {
-        $sql= "INSERT INTO `SanLuong`( `LineId`, `SanLuongQty`,`SanLuongTimes`,`SanLuongType`) VALUES (".$str_arr[1].",".$soluong.",".$str_arr[2].",'NG')";
+        $sql= "INSERT INTO `SanLuong`( `LineId`, `SanLuongQty`,`SanLuongTimes`,`SanLuongType`) VALUES (".$str_arr[1].",'".$soluong."',".$str_arr[2].",'NG')";
     }
 }elseif ($action=='remark') {
     # kiểm tra xem đã tồn tại chưa
