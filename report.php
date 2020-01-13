@@ -108,7 +108,8 @@ foreach ($list as $key => $value) {
         echo "<td rowspan='2' style='vertical-align: middle; padding:1px;'>".$rate."</td>";
         echo "<td>".$oDB->lang('Target')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
-          echo "<td colspan='2'>".viewprice($oDB->getarget($value['LineId'],$i))."</td>";
+           $target = $oDB->getarget($value['LineId'],$i);
+          echo "<td colspan='2'>".viewprice($target)."</td>";
         }
         ?>
 
@@ -120,8 +121,20 @@ foreach ($list as $key => $value) {
         <?php
          echo "<td>".$oDB->lang('Actual')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
-          echo "<td style='background-color:".$oDB->lang('color1','#b3ffe6').";'>".viewprice($oDB->getqty('OK',$value['LineId'],$i))."</td>";
-          echo "<td style='background-color:".$oDB->lang('color2','#b3ffe6').";'>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
+           $qtyok = $oDB->getqty('OK',$value['LineId'],$i);
+           $ratetime = ($qtyok=='') ? '' : $qtyok/$target ;
+            if ($ratetime>=1) {
+              $color = 'green';
+            } elseif($ratetime>=0.95&&$ratetime<1) {
+              $color = 'yellow';
+            } elseif($ratetime=='') {
+              $color = '#b3ffe6';
+            } else {
+              $color = 'red';
+            }
+
+          echo "<td style='background-color:".$color.";'>".viewprice($qtyok)."</td>";
+          echo "<td style='background-color:".$oDB->lang('color2','#b3ffe6').";color:red;'>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
         }
         ?>
 
