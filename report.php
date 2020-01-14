@@ -7,6 +7,71 @@ require('function/db_lib.php');
 $pagetitle ="Login Page";
 
 $oDB = new db();
+$images = array();
+$sql = "select ShowReportId,ShowReportName from ShowReport where ShowReportOption <> 0";
+$list = $oDB -> fetchAll($sql);
+
+foreach ($list as $key => $value) {
+  $images[] = 'picture_'.$value['ShowReportId'];
+}
+
+if (isset($_SESSION['re'])&&(count($images)+1)!=count($_SESSION['re'])) {
+  # code...
+  unset($_SESSION['re']);
+  header('Location:report.php');
+}
+
+// if ($handle = opendir('report/images/')) {
+//   while (false !== ($entry = readdir($handle))) {
+//       if ($entry != "." && $entry != "..") {
+//           $name = str_replace('.jpg','',$entry);
+//           $images[] = $name;
+//       }
+//   }
+//   closedir($handle);
+//   }
+
+// var_dump($images);
+
+if (isset($_SESSION['re'])&&$_SESSION['re']['main'][0]=='main') {
+
+} else {
+  $_SESSION['re']['main'][0]='main';
+  $_SESSION['re']['main'][1]=0;
+}
+
+foreach ($images as $key => $value) {
+ if (isset($_SESSION['re'][$value])&&$_SESSION['re'][$value][0]==$value) {
+   # code...
+ } else {
+  $_SESSION['re'][$value][0]=$value;
+  $_SESSION['re'][$value][1]=0;
+ }
+}
+// echo "<pre>";
+// var_dump($_SESSION['re']);
+// echo "<pre>";
+
+$i=1;
+$resetkey=0;
+foreach ($_SESSION['re'] as $key => $value) {
+  if ($i==count($_SESSION['re'])) {
+    $resetkey = 1;
+  }
+  if ($value[1]==0) {
+    $loadoption = $value[0];
+    $_SESSION['re'][$key][1]=1;
+    break;
+  }
+  $i++;
+}
+
+if ($resetkey==1) {
+  foreach ($_SESSION['re'] as $key => $value) {
+    $_SESSION['re'][$key][1]=0;
+  }
+}
+// echo  $loadoption;
 
 ?>
 
@@ -17,7 +82,7 @@ $oDB = new db();
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="refresh" content="300">
+  <meta http-equiv="refresh" content="<?php echo $oDB->lang('AutoLoad','20') ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -50,103 +115,24 @@ $oDB = new db();
 </head>
 
 <body>
-    <div>
-      <h1 style='text-align:center; font-weight:bold;'><?php echo $oDB->lang('ReportTitle') ?></h1>
-      <h3 style='text-align:center;'><?php echo $oDB->lang('LastUpdateTime') ?> : <?php echo date('d-m-Y H:i:s') ?></h3>
-    </div>
-  <div>
-    <table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>
-      <tr style="background-color:#C6CAC9;">
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Stt') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Products') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Line') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Plan') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Total') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Rate') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Type') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times1') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times2') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times3') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times4') ?></td>
-        <td colspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Times5') ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"> <?php echo $oDB->lang('Remark') ?></td>
-      </tr>
-
-      <tr style="background-color:#C6CAC9;">
-        <?php
-          for ($i=1; $i < 7 ; $i++) { 
-            echo "<td>".$oDB->lang('Ok')."</td>";
-            echo "<td>".$oDB->lang('Ng')."</td>";
-          }
-        ?>
-      </tr>
-
-      <?php
-      $today = date("Y-m-d");
-$sql = "select line.LineId,line.LineName,products.ProductsID,products.ProductsName 
-from line inner join `products` on line.ProductsId = products.ProductsId";
-$list = $oDB -> fetchAll($sql);
-
-foreach ($list as $key => $value) {
-  ?>
-      <tr>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $key+1 ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $value['ProductsName'] ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo $value['LineName'] ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($oDB->getplan($value['LineId'])) ?></td>
-        <?php
-          $ok = $oDB->getlineqty("OK",$value['LineId']);
-          $ng = $oDB->getlineqty("NG",$value['LineId'])
-        
-        ?>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ok) ?></td>
-        <td rowspan="2" style="vertical-align: middle; padding:1px;"><?php echo viewprice($ng) ?></td>
-        <?php
-        $total = $ok + $ng;
-        $total = $oDB->getplan($value['LineId']);
-        $rate = ($total!=0) ? round($ok/$total,3)*100 ." %" : "-" ;
-        echo "<td rowspan='2' style='vertical-align: middle; padding:1px;'>".$rate."</td>";
-        echo "<td>".$oDB->lang('Target')."</td>";
-         for ($i=1; $i < 6 ; $i++) { 
-           $target = $oDB->getarget($value['LineId'],$i);
-          echo "<td colspan='2'>".viewprice($target)."</td>";
+    <?php
+    switch ($loadoption) {
+      case 'main':
+        include_once('prd.php');
+        break;
+      default:
+        if (file_exists("report/images/".$loadoption.".jpg")) {
+        echo "<img src='report/images/".$loadoption.".jpg' style='width:100%' alt=''>";
+        }else{
+        echo "không tồn tại";
+        header('Location:report.php');
         }
-        ?>
-
-        <td rowspan="2"><?php echo $oDB->getremark($value['LineId']) ?></td>
-      </tr>
-
-      <tr>
-
-        <?php
-         echo "<td>".$oDB->lang('Actual')."</td>";
-         for ($i=1; $i < 6 ; $i++) { 
-           $qtyok = $oDB->getqty('OK',$value['LineId'],$i);
-           $ratetime = ($qtyok=='') ? '' : $qtyok/$target ;
-            if ($ratetime>=1) {
-              $color = 'green';
-            } elseif($ratetime>=0.95&&$ratetime<1) {
-              $color = 'yellow';
-            } elseif($ratetime=='') {
-              $color = '#b3ffe6';
-            } else {
-              $color = 'red';
-            }
-
-          echo "<td style='background-color:".$color.";'>".viewprice($qtyok)."</td>";
-          echo "<td style='background-color:".$oDB->lang('color2','#b3ffe6').";color:red;'>".viewprice($oDB->getqty('NG',$value['LineId'],$i))."</td>";
-        }
-        ?>
-
-      </tr>
-  <?php
-}
-?>
-      
-    </table>
+        break;
+    }
     
+    ?>
 
-  </div>
+
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>

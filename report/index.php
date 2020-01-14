@@ -11,7 +11,7 @@ require('../views/template-header.php');
 require('../function/template.php');
 $oDB = new db();
 //echo $oDB->lang("Products");
-// $lineid = (isset($_GET['line'])) ? safe($_GET['line']) : '1' ;
+$id = (isset($_GET['id'])) ? safe($_GET['id']) : '1' ;
 //$lineid = safe($_GET['line']);
 ?>
 
@@ -34,20 +34,24 @@ $oDB = new db();
         <div class="container-fluid">
 
         <?php
-        $sql = "select ShowReportId from ShowReport where ShowReportOption <> 0";
-        $list = $oDB -> fetchAll($sql);
+        $sql = "select ShowReportId,ShowReportName from ShowReport where ShowReportOption <> 0 AND ShowReportId=".$id;
+        $list = $oDB -> fetchOne($sql);
         // $ketqua=  ($oDB->getplan($list['LineId']));
-        var_dump($list);
+        // var_dump($list);
         // exit();
 
         ?>
-        <form action="" method="post">
-          <input type="file" name="" id="">
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+          <input type="file" name="picture_<?php echo $list['ShowReportId'] ?>" id="">
+          <input type="hidden" name="picturename" value='picture_<?php echo $list['ShowReportId'] ?>'>
+          <button type="submit">Upload <?php echo $list['ShowReportName'] ?></button>
         </form>
-
-
         </div>
         <!-- /.container-fluid -->
+
+        <div>
+          <img src="images/picture_<?php echo $list['ShowReportId'] ?>.jpg" style='width:100%;' alt="">
+        </div>
 
       </div>
       <!-- End of Main Content -->

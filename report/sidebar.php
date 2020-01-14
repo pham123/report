@@ -6,7 +6,7 @@
         <!-- <div class="sidebar-brand-icon rotate-n-15">
           <img src="../img/hallalogo.png" alt="logo" height="45" >
         </div> -->
-        <div class="sidebar-brand-text mx-3" Style='Color:#22356f;font-size: 3em'>Admin</div>
+        
       </a>
 
       <!-- Divider -->
@@ -21,15 +21,15 @@
 
       <!-- Divider -->
 <?php
-$sql = "select line.LineId,line.LineName from line ";
+$sql = "select ShowReportId,ShowReportName from ShowReport where ShowReportOption <> 0";
 $list = $oDB -> fetchAll($sql);
 
 foreach ($list as $key => $value) {
   ?>
       <li class="nav-item active">
-        <a class="nav-link" href="?line=<?php echo $value['LineId'] ?>">
+        <a class="nav-link" href="?id=<?php echo $value['ShowReportId'] ?>">
           <i class="fas fa-angle-right"></i>
-          <span><?php echo $value['LineName'] ?></span></a>
+          <span><?php echo $value['ShowReportName'] ?></span></a>
       </li>
   <?php
 }
