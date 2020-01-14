@@ -3,31 +3,16 @@ session_start();
 ob_start();
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 $currentlocation = basename(dirname(__FILE__));
-require('../function/function_start.php');
 require('../config.php');
 require('../function/db_lib.php');
 $page = 'system';
-$pagetitle = $page;
+$pagetitle = " Report";
 require('../views/template-header.php');
 require('../function/template.php');
 $oDB = new db();
 //echo $oDB->lang("Products");
-
-$actionar = (array_keys($_GET));
-$actionkey = (isset($actionar[0])) ? $actionar[0] : 'content' ;
-
-$action =  (explode("_",$actionkey));
-
-$option = $action[0];
-$target = (isset($action[1])) ? ucfirst($action[1]) : 'Company' ;
-$id = (isset($action[2])) ? $action[2] : 1 ;
-
-// if (file_exists('../querry/'.$option.'_'.$target.'.php')) {
-//   require('../querry/'.$option.'_'.$target.'.php');
-// }else {
-//   $sql = "Select * from ".$target;
-// }
-
+// $lineid = (isset($_GET['line'])) ? safe($_GET['line']) : '1' ;
+//$lineid = safe($_GET['line']);
 ?>
 
 <body id="page-top">
@@ -48,7 +33,17 @@ $id = (isset($action[2])) ? $action[2] : 1 ;
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
-        <?php require($option.'.php') ?>
+        <?php
+        $sql = "select ShowReportId from ShowReport where ShowReportOption <> 0";
+        $list = $oDB -> fetchAll($sql);
+        // $ketqua=  ($oDB->getplan($list['LineId']));
+        var_dump($list);
+        // exit();
+
+        ?>
+        <form action="" method="post">
+          <input type="file" name="" id="">
+        </form>
 
 
         </div>
@@ -103,8 +98,33 @@ $id = (isset($action[2])) ? $action[2] : 1 ;
     $(function () {
       $('selectpicker').selectpicker();
     });
+
+
+    $(function () {
+    $("input").on("change", function() {
+    //alert($(this).val());
+    
+    var name = $(this).attr("name");
+    var value = $(this).val();
+
+    //alert(name);
+
+        $.ajax({
+            type: "POST",
+            url: "Ajdathang.php",
+            cache: false,
+            data: {name:name,value:value}
+            }).done(function( result ) {
+            // var kq = result;
+            // alert(kq);
+            // $('.ketqua').html(kq);
+            //location.reload();
+        }); 
+    });
+    });
   </script>
 
 </body>
 
 </html>
+

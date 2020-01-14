@@ -1,0 +1,2 @@
+CREATE TABLE ShowReport (             ShowReportId INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,             ShowReportName VARCHAR(50) NOT NULL UNIQUE,             ShowReportDescription VARCHAR(100),             ShowReportOption INT(2),             ShowReportCreateDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,             ShowReportUpdateDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);;
+INSERT INTO `showreport`( `ShowReportName`, `ShowReportDescription`, `ShowReportOption`) VALUES ('Report1','Report1','1');

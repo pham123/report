@@ -1,7 +1,9 @@
 <?php
+
+
 class db {
 	public $dbh; // Create a database connection for use by all functions in this class
-	public $lang="En";
+	public $lang="Vi";
 
 	function __construct() {
 		if($this->dbh = mysqli_connect(_DB_HOST_, _DB_USER_, _DB_PASS_, _DB_name_)) {
@@ -30,8 +32,11 @@ class db {
 		// Return false if no, true if yes
 		public function in_table($table,$where) {
 			$query = 'SELECT * FROM ' . _DB_PREFIX_ . $table . ' WHERE ' . $where;
-			$result = mysqli_query($this->dbh,$query);
-			return mysqli_num_rows($result) > 0;
+			
+			if ($result = mysqli_query($this->dbh,$query)) {
+				return mysqli_num_rows($result) > 0;
+			}
+			
 		}
 		public function sl_one($table,$where) {
 			$query = 'SELECT * FROM ' . _DB_PREFIX_ . $table . ' WHERE ' . $where;
@@ -87,6 +92,7 @@ class db {
 		public function sl_all($table,$where) {
 			$query = 'SELECT * FROM ' . _DB_PREFIX_ . $table . ' WHERE ' . $where;
 			$rs = mysqli_query($this->dbh,$query);
+			$rows = [];
 			while ($row = mysqli_fetch_assoc($rs)){
 				$rows[] = $row;
 			}
@@ -96,6 +102,7 @@ class db {
 		public function sl_col_all($colar,$table,$where) {
 			$query = 'SELECT '.$table.'Id as id,' .$colar .' FROM ' . _DB_PREFIX_ . $table . ' WHERE ' . $where;
 			$rs = mysqli_query($this->dbh,$query);
+			$rows=[];
 			while ($row = mysqli_fetch_assoc($rs)){
 				$rows[] = $row;
 			}
@@ -106,24 +113,26 @@ class db {
 		public function getcol($table) {
 			$query = "SHOW COLUMNS FROM ".$table."";
 			$rs = mysqli_query($this->dbh,$query);
-			$text = '';
+			// $text = '';
+			$return = array();
 			while ($row = mysqli_fetch_assoc($rs)){
-				$text = $text." | ".$row['Field'];
+				// $text = $text.". ".$row['Field'];
+				$return[] = $row['Field'];
 			}
 			//$arr = mysqli_fetch_assoc($rs);
-			return $text;
+			return $return;
 			// return $rows;
-			
 		}
 
 		//Lấy thông tin
 		public function lang($key,$value=Null) {
 			$ngongu = $this->lang;
+			
 			if ($value==Null) {
 				$value = implode(" ",preg_split('/(?=[A-Z])/', $key, -1, PREG_SPLIT_NO_EMPTY));
 			}
 			$return = $value;
-			$query = "SELECT Lang".$ngongu." FROM " . _DB_PREFIX_ . "lang WHERE LangName='".$key."'" ;
+			$query = "SELECT Lang".$ngongu." FROM " . _DB_PREFIX_ . "Lang WHERE LangName='".$key."'" ;
 			$rs = mysqli_query($this->dbh,$query);
 			$result = $rs->fetch_array();
 			if (isset($result['Lang'.$ngongu])) {
@@ -136,66 +145,19 @@ class db {
 			return $return;
 		}
 
-		public function getqty($type,$lineid,$times){
-			$sql = "Select * from sanluong where SanLuongType='".$type."' AND date(SanLuongCreateDate)='".date('Y-m-d')."'AND LineId=".$lineid." AND SanLuongTimes=".$times;
-			$rs = mysqli_query($this->dbh,$sql);
+		//
+		public function sl_id($table) {
+			$query = 'SELECT MAX('.$table.'Id) As '.$table.'Id FROM ' . _DB_PREFIX_ . $table . ' WHERE 1';
+			$rs = mysqli_query($this->dbh,$query);
 			$result = $rs->fetch_array();
-			if (isset($result)) {
-				return $result['SanluongQty'];
-			}else{
-				return "";
-			}
-			
+			return $result[$table.'Id'];
 		}
 
-		public function getlineqty($type,$lineid){
-			$sql = "Select SUM(SanluongQty) AS SanluongQty from sanluong where SanLuongType='".$type."' AND date(SanLuongCreateDate)='".date('Y-m-d')."'AND LineId=".$lineid." GROUP BY LineId";
-			$rs = mysqli_query($this->dbh,$sql);
+		public function get_one($column,$table,$id) {
+			$query = 'SELECT '.$column.' FROM ' . _DB_PREFIX_ . $table . ' WHERE '.$table.'Id=' . $id;
+			$rs = mysqli_query($this->dbh,$query);
 			$result = $rs->fetch_array();
-			if (isset($result)) {
-				return $result['SanluongQty'];
-			}else{
-				return 0;
-			}
-			
-		}
-
-		
-		public function getplan($lineid){
-			$sql = "Select * from kehoach where date(KeHoachCreateDate)='".date('Y-m-d')."'AND LineId=".$lineid;
-			$rs = mysqli_query($this->dbh,$sql);
-			$result = $rs->fetch_array();
-			if (isset($result)) {
-				return $result['KeHoachQty'];
-			}else{
-				return "";
-			}
-			
-		}
-
-		public function getarget($lineid,$time){
-			$sql = "Select * from TargetQuantity where TargetQuantityTimes=".$time." AND LineId=".$lineid;
-			$rs = mysqli_query($this->dbh,$sql);
-			$result = $rs->fetch_array();
-			if (isset($result)) {
-				return $result['TargetQuantityQty'];
-			}else{
-				return "";
-			}
-			
-		}
-
-
-		public function getremark($lineid){
-			$sql = "Select * from remark where date(RemarkCreateDate)='".date('Y-m-d')."'AND LineId=".$lineid;
-			$rs = mysqli_query($this->dbh,$sql);
-			$result = $rs->fetch_array();
-			if (isset($result)) {
-				return $result['RemarkContent'];
-			}else{
-				return "";
-			}
-			
+			return $result[$column];
 		}
 }
 
@@ -204,13 +166,42 @@ class products extends db{
 	public $id;
 	public $name;
 	public $number;
+
 	public function get($id) {
-		$result = $this->sl_one('products','ProductsId='.$id);
+		$result = $this->sl_one('Products','ProductsId='.$id);
 		$this->name = $result['ProductsName'];
 		$this->number = $result['ProductsNumber'];
 	}
+
+	public function getnum($number) {
+		$result = $this->sl_one('Products',"ProductsNumber='".$number."'");
+		$this->name = $result['ProductsName'];
+		$this->number = $result['ProductsNumber'];
+		$this->id = $result['ProductsId'];
+	}
+
 }
 
+
+class Users extends db{
+	public $id;
+	public $access;
+	public $module;
+	public $name;
+
+	public function set($id) {
+		$this->id = $id;
+		$user = $this->sl_one('Users','UsersId='.$id);
+		$this->name = $user['UsersName'];
+		return $this;
+	}
+	public function acess() {
+		$result = $this->sl_one('Modules','ModulesName="'.$this->module.'"');
+		$result2 = $this->sl_one('Access','ModulesId='.$result['ModulesId'].' AND UsersId='.$this->id);
+		return $result2['AccessOption'];
+	}
+
+}
 
 
 
@@ -219,24 +210,6 @@ $rv= addslashes($x);
 $rv = strip_tags($rv);
      return $rv;
 }
-
-function w_logs($dir,$content){
-	date_default_timezone_set('Asia/Ho_Chi_Minh');
-	$name = date("Y-m-d");
-	$now = date("Y-m-d H:i:s");
-	$text = $now."\t".$content.PHP_EOL;
-	if (!file_exists ($dir.$name.".txt")) {
-		$myfile = fopen($dir.$name.".txt", "w") or die("Unable to open file!");
-		file_put_contents ($dir.$name.".txt",$text ,FILE_APPEND);
-	}else{
-		file_put_contents ($dir.$name.".txt",$text ,FILE_APPEND);
-	
-	}
-}
-
-
-
-
 
 function getStartAndEndDate($week, $year)
 {
@@ -249,14 +222,6 @@ function getStartAndEndDate($week, $year)
     $return[1] = date('Y-m-d', $time);
     return $return;
 }
-
-function rangeMonth($datestr) {
-    date_default_timezone_set(date_default_timezone_get());
-    $dt = strtotime($datestr);
-    $res[0] = date('Y-m-d', strtotime('first day of this month', $dt));
-    $res[1] = date('Y-m-d', strtotime('last day of this month', $dt));
-    return $res;
-	}
 
 function viewprice($price){
 	$number = $price;

@@ -161,12 +161,14 @@ if ($_SESSION[_site_]['useroption']=='1') {
   $linkar =  array(
     // array('../Approval/','APPROVAL','Request everything!','fa-check-square'),
     array('../productivity/',$oDB->lang('Productivity','Sản lượng'),$oDB->lang('Quantity'),'fa-pallet'),
+    array('../report/',$oDB->lang('Report'),$oDB->lang('Report'),'fa-images'),
     array('../system/',$oDB->lang('Admin'),$oDB->lang('AdminSeting'),'fa-cogs'),
   );
 }else{
   $linkar =  array(
     // array('../Approval/','APPROVAL','Request everything!','fa-check-square'),
     array('../productivity/',$oDB->lang('Productivity','Sản lượng'),$oDB->lang('Quantity'),'fa-pallet'),
+    array('../report/',$oDB->lang('Report'),$oDB->lang('Report'),'fa-images'),
   );
 }
 

@@ -5,3 +5,13 @@ define('_DB_PASS_','');
 define('_DB_name_','report');
 define('_DB_PREFIX_','');
 define('_site_','report');
+
+define('ROOT_DIR', dirname(__FILE__));
+function i_func($func_name)
+{
+    include ROOT_DIR.'/function/'.$func_name.'.php';
+}
+function getfunc($func_name)
+{
+    include ROOT_DIR.'/function/'.$func_name.'.php';
+}

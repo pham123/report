@@ -28,6 +28,7 @@ $arr = array(
   array('?tables_Line', 'fa-angle-right',$oDB->lang("Line")),
   array('?tables_Products', 'fa-angle-right',$oDB->lang("Products")),
   array('?tables_TargetQuantity', 'fa-angle-right',$oDB->lang("TargetQuantity")),
+  array('?tables_ShowReport', 'fa-angle-right',$oDB->lang("ShowReport")),
 );
 echo nav_item($oDB->lang("Company"),$arr);
 ?>
