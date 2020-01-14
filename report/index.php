@@ -50,7 +50,7 @@ $id = (isset($_GET['id'])) ? safe($_GET['id']) : '1' ;
         <!-- /.container-fluid -->
 
         <div>
-          <img src="images/picture_<?php echo $list['ShowReportId'] ?>.jpg" style='width:100%;' alt="">
+          <img src="images/picture_<?php echo $list['ShowReportId'] ?>.jpg?dummy=<?php echo date('ymdhis') ?>" style='width:100%;' alt="">
         </div>
 
       </div>
