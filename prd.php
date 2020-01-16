@@ -69,6 +69,7 @@ foreach ($list as $key => $value) {
         <?php
          echo "<td>".$oDB->lang('Actual')."</td>";
          for ($i=1; $i < 6 ; $i++) { 
+          $target = $oDB->getarget($value['LineId'],$i);
            $qtyok = $oDB->getqty('OK',$value['LineId'],$i);
            $ratetime = ($qtyok=='') ? '' : $qtyok/$target ;
             if ($ratetime>=1) {
